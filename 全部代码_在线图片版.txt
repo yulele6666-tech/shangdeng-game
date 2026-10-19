@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#171d22">
+  <title>兴宁客家上灯护灯小游戏</title>
+  <style>
+    :root{color-scheme:dark;--bg:#171d22;--panel:#20272c;--edge:#374047;--ink:#f4e6c8;--muted:#a7aca6;--gold:#e8b65c;--green:#9ebda0}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",sans-serif;line-height:1.6}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 49.8%,#ffffff02 50%,transparent 50.2%);background-size:48px 48px}
+    main{max-width:1100px;margin:auto;padding:32px 32px 24px}.masthead{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--edge);padding-bottom:18px;margin-bottom:26px}
+    .brand{font-size:14px;letter-spacing:3px;color:var(--gold);display:flex;align-items:center;gap:12px}.brand-icon{width:19px;height:23px;background:#ce6850;border:3px solid #080e13;box-shadow:0 -5px 0 -2px var(--gold),0 6px 0 -5px var(--gold)}.edition{font:11px monospace;color:var(--muted);letter-spacing:2px}
+    .intro{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:24px}.eyebrow{color:var(--green);font-size:11px;letter-spacing:4px;margin:0 0 8px}h1{font-family:"SimSun",serif;font-size:32px;letter-spacing:3px;line-height:1.35;margin:0 0 9px}.subtitle{margin:0;color:var(--muted);font-size:13px}.badge{white-space:nowrap;font-size:11px;color:var(--gold);border:1px solid #796342;padding:6px 10px;letter-spacing:1px}
+    .game-shell{border:1px solid #51534b;background:#10171b;padding:8px;box-shadow:0 14px 40px #0004}.hud{display:grid;grid-template-columns:1.2fr 1fr auto;gap:25px;align-items:center;padding:14px 18px 17px;background:var(--panel);border-bottom:1px solid #44493f;font-size:12px}.hud-label{color:var(--muted);font-size:10px;letter-spacing:2px;display:block;margin-bottom:4px}.meter-head{display:flex;justify-content:space-between}.meter{height:6px;background:#0f1518;margin-top:6px}.meter-fill{height:100%;width:100%;background:var(--gold);transition:width .15s linear}.time-row{display:flex;align-items:center;gap:13px}.time{font:24px monospace;letter-spacing:2px}.time-note{color:var(--muted);font-size:10px}
+    button{font:inherit;color:var(--ink);background:#293139;border:1px solid #58605d;cursor:pointer;padding:8px 12px;transition:background .15s}button:hover{background:#39434a}button:focus-visible{outline:2px solid var(--gold);outline-offset:4px}.hud-actions{display:flex;gap:8px}.stage{position:relative;background:#1b292c;aspect-ratio:16/9;overflow:hidden}canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none;outline:none}canvas:focus-visible{box-shadow:inset 0 0 0 3px var(--gold)}
+    .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#071015a8;padding:20px}.overlay[hidden]{display:none}.dialog{width:370px;text-align:center;background:#1c252bee;border:1px solid #7f7154;padding:26px 32px;box-shadow:6px 6px 0 #070d12}.dialog-mark{color:var(--gold);font-size:12px;letter-spacing:5px;margin:0 0 8px}.dialog h2{font-family:"SimSun",serif;font-size:28px;letter-spacing:4px;margin:0 0 10px}.dialog p{font-size:12px;color:#c0c3b6;margin:0 0 20px}.primary{background:var(--gold);border:2px solid #0c1216;box-shadow:3px 3px 0 #070d12;color:#25221c;font-weight:bold;padding:11px 26px;letter-spacing:2px}.primary:hover{background:#f4cb7d}.dialog-foot{display:block;color:#8d9795;font-size:10px;margin-top:15px;letter-spacing:1px}
+    .game-caption{display:flex;justify-content:space-between;gap:14px;padding:10px 14px 3px;font-size:11px;color:var(--muted)}.status-dot{color:var(--green);margin-right:5px}.legend{display:flex;gap:16px}.legend span::before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;background:var(--gold)}.legend .player::before{background:#7aa9a5}.legend .chicken::before{background:#dfce9f}.legend .dog::before{background:#747acb}
+    .instructions{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:26px}.instruction{display:flex;gap:14px}.step{font:12px monospace;color:var(--gold);padding-top:2px}.instruction h3{font-size:13px;font-weight:500;margin:0 0 5px}.instruction p{font-size:11px;color:var(--muted);margin:0;line-height:1.9}kbd{font:10px monospace;border:1px solid #59615e;background:#232c32;padding:1px 4px;color:var(--ink);box-shadow:0 2px 0 #0c1318}.footer{display:flex;justify-content:space-between;border-top:1px solid var(--edge);margin-top:28px;padding-top:14px;font-size:10px;color:#7f8a88;letter-spacing:1px}.touch-controls{display:none;margin-top:12px;justify-content:space-between;align-items:center}.dpad{display:grid;grid-template-columns:repeat(3,42px);gap:5px}.dpad button{padding:7px;touch-action:none;user-select:none}.touch-attack{padding:14px 20px;touch-action:none;user-select:none}
+    @media(max-width:700px){main{padding:18px 12px}.masthead{margin-bottom:20px}.edition{font-size:9px;letter-spacing:1px}h1{font-size:25px}.intro{align-items:flex-start}.badge{display:none}.hud{gap:12px;padding:10px;grid-template-columns:1fr auto}.time-note{display:none}.hud-actions{grid-column:1/-1;justify-content:flex-end}.hud-actions button{font-size:11px;padding:3px 9px}.instructions{grid-template-columns:1fr;gap:16px}.legend{gap:8px}.game-caption{font-size:9px;padding:8px 3px}.dialog{padding:17px 20px;width:330px;max-width:100%}.dialog h2{font-size:22px}.dialog p{margin-bottom:12px}.dialog-foot{margin-top:10px}.footer{letter-spacing:0}.brand{font-size:11px;letter-spacing:2px}}
+    @media(max-width:700px){.overlay{padding:8px}.dialog{padding:10px 12px}.dialog-mark{margin-bottom:2px;font-size:10px}.dialog h2{font-size:20px;margin-bottom:6px;letter-spacing:2px}.dialog p{font-size:11px;line-height:1.5;margin-bottom:9px}.dialog-foot{display:none}.primary{padding:8px 18px;font-size:12px}}
+    @media(pointer:coarse){.touch-controls{display:flex}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+<!-- 合并界面样式：原 ui.css -->
+<style>
+/* Presentation only. No input handling or game rules. */
+:root{--bg:#101c25;--panel:#1b2b32;--edge:#34484a;--ink:#f3e4bf;--muted:#a3b5ac;--gold:#e5b564;--green:#9ebaa0}
+body{background:#101c25}body::before{background:none;border:8px solid #0a141d;box-shadow:inset 0 0 0 1px #293d43}
+main{max-width:1180px;padding-top:25px}.masthead{border-bottom:2px solid #304448;margin-bottom:23px;padding-bottom:15px;position:relative}.masthead::after{content:"◆";position:absolute;color:#bd854e;background:#101c25;padding:0 9px;right:0;bottom:-12px;font-size:12px}.brand{color:#dfb578;letter-spacing:4px}.brand-icon{width:22px;height:29px;background:#b94f3c;box-shadow:inset 3px 0 #dd8960,inset -3px 0 #793c32,0 -5px 0 -2px #d7b475,0 6px 0 -4px #d7b475;border:3px solid #060e17}.edition{color:#8ca9a5}
+.intro{margin-bottom:23px}.eyebrow{font-size:10px;color:#b1b9a3;letter-spacing:5px}h1{font-family:"SimSun","Songti SC",serif;font-size:34px;color:#f0d6a1;letter-spacing:4px;text-shadow:3px 3px #080f18}.subtitle{color:#a6b7ad}.badge{border:2px solid #826849;background:#1e2a2e;color:#deb878;box-shadow:3px 3px #080f18;font-size:10px}
+.game-shell{border:3px solid #11191b;padding:7px;background:#46514a;box-shadow:0 0 0 1px #a28a60,0 0 0 4px #23353a,7px 9px 0 #07111b;position:relative}.hud{background:#1a2931;border:2px solid #0b161e;border-bottom:3px solid #8b7049;grid-template-columns:1.2fr 1fr auto;padding:13px 18px 15px;gap:26px}.hud-label{font-size:10px;letter-spacing:3px;color:#adbaa9}.meter-head #stability{font-family:monospace;color:#efcc8a;font-size:13px}.meter{height:14px;border:2px solid #09151c;background:#0e1b22;box-shadow:0 1px #5e6550;position:relative;margin-top:5px}.meter-fill{background:#e8b65c;box-shadow:inset 0 2px #f7dc9a,inset 0 -3px #ac743c}.meter::after{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='12'%3E%3Cpath d='M17 0V12' stroke='%23101d26' stroke-width='2'/%3E%3C/svg%3E");background-repeat:repeat;pointer-events:none}.time{font:27px "Courier New",monospace;font-weight:bold;letter-spacing:4px;color:#f3da9e;text-shadow:2px 2px #070e15}.time-row{gap:14px}.time-note{color:#8ca59d}.hud-actions button{background:#293c42;border:2px solid #0b161f;color:#dfd8bd;box-shadow:inset 0 1px #63756b,2px 2px #09141c;font-size:11px;padding:7px 11px}.hud-actions button:hover{background:#3a4f4e}.hud-actions button:disabled{opacity:.45;cursor:default}
+.stage{border:2px solid #0c171d;border-top:0;background:#10222c}.game-caption{background:#182831;color:#b0bba7;border:2px solid #0c171d;border-top:1px solid #4f6154;padding:9px 12px 7px}.status-dot{color:#e0b365}.legend span::before{border:1px solid #07131a;box-shadow:1px 1px #07131a;width:8px;height:8px}.overlay{background:#08151c9c}.dialog{background:#172932;border:3px solid #070f17;outline:2px solid #b38e55;box-shadow:inset 0 0 0 2px #47584e,7px 7px 0 #07101a;padding:75px 31px 25px;position:relative;width:395px}.dialog::before{content:"";position:absolute;top:14px;left:calc(50% - 20px);width:40px;height:52px;background:url('https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/lantern/lantern.png') center/contain no-repeat;image-rendering:pixelated}.dialog-mark{color:#d6ac66;font-size:10px;letter-spacing:6px}.dialog h2{font-size:27px;letter-spacing:3px;color:#f0d59e;text-shadow:2px 2px #08131b}.dialog p{color:#acbdb0;font-size:12px;line-height:1.9}.dialog-foot{color:#839e97;font-family:monospace;font-size:10px;letter-spacing:1px}.primary{border:3px solid #0a141c;background:#d9a254;color:#1b2424;box-shadow:inset 0 2px #f1d394,inset 0 -3px #9b6c3c,4px 4px #07121a;padding:11px 28px}.primary:hover{background:#edbe73}.primary:active{transform:translate(2px,2px);box-shadow:inset 0 2px #f1d394,inset 0 -3px #9b6c3c,2px 2px #07121a}
+.instructions{margin-top:29px;gap:25px}.instruction{background:#17272f;border-top:2px solid #42564e;border-bottom:2px solid #09151e;padding:13px 13px 15px;gap:11px;position:relative}.step{color:#d1a760;font-size:12px}.instruction h3{font-size:12px;color:#e3d4ad}.instruction p{font-size:10px;color:#96aba2;line-height:2}kbd{border:1px solid #6b7865;background:#263b3f;box-shadow:1px 2px #09141c;color:#ebd5a0;padding:1px 4px}.footer{border-top:1px solid #34484a;color:#75948c;margin-top:24px;padding-top:12px}.touch-controls button{border:2px solid #07141c;box-shadow:inset 0 1px #667b66,2px 2px #07121b;background:#2c4545}.touch-attack{color:#e9c781}
+@media(max-width:700px){main{padding:18px 12px}.brand{letter-spacing:2px}.edition{font-size:8px}h1{font-size:24px;letter-spacing:2px}.intro{margin-bottom:21px}.game-shell{padding:4px}.hud{grid-template-columns:1fr auto;gap:9px;padding:9px}.hud-label{font-size:9px;letter-spacing:1px}.time{font-size:23px;letter-spacing:2px}.hud-actions button{padding:2px 8px;font-size:10px}.game-caption{font-size:9px;padding:6px 4px}.legend{gap:6px}.legend span::before{width:6px;height:6px;margin-right:3px}.dialog{width:310px;padding:11px 15px;box-shadow:inset 0 0 0 1px #47584e,4px 4px #07101a}.dialog::before{display:none}.dialog-mark{font-size:9px;letter-spacing:3px;margin-bottom:2px}.dialog h2{font-size:19px;letter-spacing:1px;margin-bottom:5px}.dialog p{font-size:10px;line-height:1.5;margin-bottom:8px}.primary{font-size:11px;padding:7px 18px}.instructions{gap:11px;margin-top:23px}.instruction{padding:10px 12px}.instruction p{font-size:11px}.footer{font-size:9px;gap:14px}.meter{height:12px}}
+@media(max-width:370px){.legend{display:none}.dialog h2{font-size:17px}.dialog{padding:8px 10px}.dialog-mark{display:none}}
+.dialog-actions{display:flex;justify-content:center;align-items:center;gap:10px}.secondary-action{border:2px solid #09151e;background:#293e42;color:#e4d4b1;font-size:12px;padding:10px;box-shadow:inset 0 1px #657565,3px 3px #07121a}.secondary-action:hover{background:#3a5150}.secondary-action[hidden]{display:none}
+@media(max-width:700px){.dialog-actions{gap:8px}.secondary-action{font-size:10px;padding:9px 8px}.dialog-actions .primary{padding-left:12px;padding-right:12px}}
+
+/* Opening screens use flat blocks and the existing local lantern art. */
+[hidden]{display:none!important}
+.opening-screen{min-height:100vh;min-height:100svh;background:#322429;color:#f3dbab;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:110px 24px 24px;border:8px solid #11151d;box-shadow:inset 0 0 0 2px #936342}
+.opening-screen::before,.opening-screen::after{content:"";position:absolute;width:130px;height:250px;bottom:0;background:#433039;border:6px solid #211c24;pointer-events:none;z-index:0}
+.opening-screen::before{left:-75px;box-shadow:70px 90px 0 #3d2c32}.opening-screen::after{right:-75px;box-shadow:-70px 90px 0 #3d2c32}
+.festival-rope{position:absolute;left:5%;right:5%;top:29px;height:68px;border-top:4px solid #15171e;display:flex;justify-content:space-around;pointer-events:none}.festival-rope img{width:33px;height:65px;object-fit:contain;image-rendering:pixelated}
+.opening-panel{position:relative;z-index:1;width:570px;max-width:100%;text-align:center;padding:35px 40px;background:#49313a;border:4px solid #11151d;outline:2px solid #b88b52;box-shadow:inset 0 0 0 3px #795045,8px 8px 0 #211c24}
+.opening-kicker{font-size:11px;letter-spacing:5px;color:#d9aa64;margin:0 0 12px}.opening-panel h1{font-size:38px;letter-spacing:5px;color:#f4d591;text-shadow:3px 3px #181a22;margin:0 0 12px}.opening-lantern{height:120px;width:88px;object-fit:contain;image-rendering:pixelated;margin:4px auto}.opening-caption{font-size:13px;color:#d2bda4;margin:8px 0 24px}.loading-head{display:flex;justify-content:space-between;font-size:11px;color:#e6c598;margin:12px 0 8px}.opening-progress{height:21px;border:3px solid #11151d;background:#251f2a;padding:2px;box-shadow:0 2px #805642}.opening-progress>div{height:100%;width:0;background:#e8b65c;box-shadow:inset 0 3px #f4d591,inset 0 -3px #9b653c}.opening-footer{z-index:1;font-size:10px;letter-spacing:2px;color:#b69c87;margin:26px 0 0}
+.character-choices{display:flex;justify-content:center;gap:24px}.character-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:9px;width:180px;max-width:45%;padding:15px 12px 21px;background:#302b34;border:4px solid #141820;box-shadow:inset 0 0 0 2px #695058,4px 4px #211c24;color:#ecd5ad}.character-card:hover{background:#493942}.character-card[aria-pressed=true]{border-color:#efc56f;background:#4b3b39;box-shadow:inset 0 0 0 2px #171a22,4px 4px #211c24}.character-card strong{font-weight:500;font-size:15px;letter-spacing:4px}.character-preview{height:155px;display:flex;align-items:flex-end;justify-content:center;width:100%}.character-preview img{height:100%;width:116px;object-fit:contain;image-rendering:pixelated}.choice-indicator{visibility:hidden;position:absolute;right:4px;top:4px;font-size:9px;padding:1px 4px;background:#efc56f;color:#26232b;border:1px solid #171a22}.character-card[aria-pressed=true] .choice-indicator{visibility:visible}.choice-status{font-size:11px;color:#d9be96;margin:21px 0 14px;min-height:18px}.choose-start{min-width:180px}.choose-start:disabled{opacity:.5;cursor:default;transform:none}.opening-controls{font:10px monospace;color:#bda18d;margin:19px 0 0}.result-character{position:absolute;right:17px;top:15px;width:40px;height:56px;object-fit:contain;image-rendering:pixelated}
+@media(max-width:700px){.opening-screen{padding:100px 17px 26px;border-width:5px}.opening-panel{padding:26px 17px}.opening-panel h1{font-size:27px;letter-spacing:2px}.opening-caption{font-size:11px;margin-bottom:19px}.character-choices{gap:17px}.character-card{padding:11px 8px 14px}.character-preview{height:132px}.character-preview img{width:96px}.opening-kicker{font-size:10px;letter-spacing:3px}.opening-footer{font-size:9px;letter-spacing:1px}.choose-start{font-size:14px;padding:10px 24px}.result-character{width:24px;height:33px;right:8px;top:6px;opacity:.95}.choose-panel .opening-caption{max-width:220px;margin-left:auto;margin-right:auto}}
+
+.campaign-clock{position:absolute;right:14px;top:12px;z-index:1;display:flex;align-items:center;gap:9px;background:#172932;border:2px solid #0a151e;box-shadow:2px 2px #07121a;padding:5px 9px;color:#d9be91;font-size:10px}.campaign-clock time{font:17px monospace;letter-spacing:2px;color:#f2cc7f}.stage>.overlay{z-index:2}.skin-rule{font-size:10px;line-height:1.7;color:#c6ab84;margin:17px 0 0}.has-unlocked{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.has-unlocked .character-card{width:100%;max-width:none;padding-left:7px;padding-right:7px}.has-unlocked .character-card strong{font-size:12px;letter-spacing:1px}.has-unlocked .character-preview img{max-width:100%;object-fit:contain}.unlock-message{color:#f0c66e!important;border:2px solid #987549;background:#203239;padding:9px 10px;margin:0 0 14px!important;font-size:11px!important;line-height:1.65!important}.return-selection{display:block;margin:14px auto 0;padding:4px 11px;color:#cbb792;border-color:#52605b;font-size:11px;background:#253b40}.dialog.campaign-result{width:450px}.campaign-result .dialog-foot{margin-top:9px}
+@media(max-width:700px){.campaign-clock{top:7px;right:7px;padding:2px 5px;gap:5px;font-size:8px}.campaign-clock time{font-size:12px;letter-spacing:1px}.has-unlocked{gap:8px}.has-unlocked .character-card{padding:10px 4px 13px}.has-unlocked .character-preview{height:105px}.has-unlocked .character-preview img{max-height:105px}.has-unlocked .character-card strong{font-size:11px}.skin-rule{font-size:9px;margin-top:13px}.dialog.campaign-result{width:330px;padding-top:8px;padding-bottom:8px}.campaign-result .dialog-mark{font-size:8px}.campaign-result h2{font-size:17px;margin-bottom:3px}.campaign-result p{font-size:9px;line-height:1.4;margin-bottom:5px}.campaign-result .unlock-message{font-size:9px!important;line-height:1.35!important;padding:4px 6px;margin-bottom:6px!important}.return-selection{font-size:9px;padding:2px 8px;margin-top:6px}.campaign-result .primary{font-size:10px;padding-top:5px;padding-bottom:5px}.campaign-result .result-character{width:21px;height:29px;right:7px}}
+
+.story-mode{padding:35px 26px;min-height:100svh}.story-mode .festival-rope{display:none}.story-panel{position:relative;z-index:1;display:grid;grid-template-columns:40% 60%;width:1080px;max-width:100%;background:#392c31;border:4px solid #11151d;outline:2px solid #b88b52;box-shadow:8px 8px #211c24;text-align:left}.story-art{position:relative;min-height:590px;overflow:hidden;border-right:4px solid #11151d;background:#ba805b}.story-art img{width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;image-rendering:pixelated}.story-art>span{position:absolute;bottom:18px;left:15px;right:15px;text-align:center;padding:7px;background:#3c2d32;border:2px solid #171820;color:#efd2a0;font-size:11px;letter-spacing:3px}.story-copy{padding:32px 33px 25px;display:flex;flex-direction:column}.story-copy h1{font-size:30px;letter-spacing:3px;color:#f1d297;margin-bottom:21px;text-shadow:2px 2px #171820}.story-text{flex:1;color:#e7d4b8;font-size:14px;line-height:1.9}.story-text p{min-height:1.9em;margin:0 0 12px}.story-text .typing::after{content:'▌';color:#e8b65c;margin-left:2px}.story-actions{min-height:58px;display:flex;justify-content:space-between;align-items:center;gap:14px;border-top:2px solid #735044;margin-top:13px;padding-top:14px}.story-status{font-size:10px;color:#c6a789;max-width:230px}.story-actions button{padding:8px 24px}.story-panel:focus{outline:2px solid #b88b52}
+@media(max-width:700px){.story-mode{padding:22px 14px}.story-panel{grid-template-columns:1fr}.story-art{min-height:170px;height:170px;border-right:0;border-bottom:4px solid #11151d}.story-art img{object-position:center 58%}.story-art>span{bottom:8px;left:10px;right:10px;padding:3px;font-size:9px;letter-spacing:2px}.story-copy{padding:20px 18px 17px}.story-copy .opening-kicker{margin-bottom:7px;font-size:9px}.story-copy h1{font-size:23px;margin-bottom:15px;letter-spacing:2px}.story-text{font-size:12px;line-height:1.8}.story-text p{min-height:1.8em;margin-bottom:9px}.story-status{font-size:9px;max-width:170px}.story-actions{min-height:51px;padding-top:11px;margin-top:8px}.story-actions button{font-size:12px;padding:7px 18px}.story-mode .opening-footer{margin-top:20px}}
+.story-text p{min-height:3.8em}
+@media(max-width:700px){.story-text p{min-height:3.6em}}
+.music-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 16px;background:#182831;border:2px solid #0c171d;border-top:0;color:#b0bba7;font-size:11px}.music-controls button{background:#293c42;border:2px solid #0b161f;color:#efcc8a;padding:5px 12px;font:inherit;cursor:pointer;min-width:88px}.music-controls input{width:112px;accent-color:#e8b65c;cursor:pointer}.music-controls output{min-width:34px;font-family:monospace;color:#efcc8a}.music-controls>span{margin-left:auto;color:#839e97;font-size:10px}.music-controls button:focus-visible,.music-controls input:focus-visible{outline:2px solid #e8b65c;outline-offset:3px}@media(max-width:500px){.music-controls{gap:6px;padding:6px 9px}.music-controls>span{display:none}.music-controls input{width:95px}}
+
+</style>
+</head>
+<body>
+<section class="opening-screen" id="opening-screen" aria-label="开场与角色选择">
+  <div class="festival-rope" aria-hidden="true"><img src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/lantern/lantern.png" alt=""><img src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/lantern/lantern.png" alt=""><img src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/lantern/lantern.png" alt=""><img src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/lantern/lantern.png" alt=""></div>
+  <section class="opening-panel" id="loading-pane" aria-labelledby="opening-title">
+    <p class="opening-kicker">一盏花灯 · 一路守护</p>
+    <h1 id="opening-title">兴宁客家上灯</h1>
+    <img class="opening-lantern" src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/lantern/lantern.png" alt="客家花灯">
+    <p class="opening-caption">灯火将明，等你同行</p>
+    <div class="loading-head"><span>正在准备花灯与院落</span><span id="loading-value">0%</span></div>
+    <div class="opening-progress" id="loading-progress" role="progressbar" aria-label="游戏资源加载进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="loading-fill"></div></div>
+  </section>
+  <section class="story-panel" id="story-pane" tabindex="-1" aria-labelledby="story-title" hidden>
+    <div class="story-art"><img src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/background/story-weilongwu.png" alt="傍晚的兴宁客家围龙屋，庭院中摆放着传统上灯花灯"><span>傍晚 · 兴宁围龙屋</span></div>
+    <div class="story-copy"><p class="opening-kicker">一盏宫灯 · 八百年传承</p><h1 id="story-title">这盏花灯的由来</h1>
+      <div id="story-text" class="story-text" aria-live="off"></div>
+      <div class="story-actions"><span id="story-status" class="story-status" role="status">灯火里的故事，正慢慢展开……</span><button type="button" class="primary" id="story-continue" hidden>继续</button></div>
+    </div>
+  </section>
+  <section class="opening-panel choose-panel" id="choose-pane" aria-labelledby="choose-title" hidden>
+    <p class="opening-kicker">客家上灯 · 护灯人</p>
+    <h1 id="choose-title">选择你的护灯人</h1>
+    <p class="opening-caption">选一位小伙伴，一同把花灯送进祠堂</p>
+    <div class="character-choices" role="group" aria-label="选择角色">
+      <button type="button" class="character-card" data-character="male" aria-pressed="false"><span class="character-preview"><img src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/player/player.png" alt="男生小人预览"></span><strong>男生</strong><span class="choice-indicator" aria-hidden="true">选中</span></button>
+      <button type="button" class="character-card" data-character="female" aria-pressed="false"><span class="character-preview"><img src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/player/female.png" alt="女生小人预览"></span><strong>女生</strong><span class="choice-indicator" aria-hidden="true">选中</span></button>
+      <button type="button" class="character-card" data-character="lantern" aria-pressed="false" hidden><span class="character-preview"><img src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/player/lantern-envoy.png" alt="花灯使者皮肤预览"></span><strong>花灯使者</strong><span class="choice-indicator" aria-hidden="true">选中</span></button>
+    </div>
+    <p id="skin-rule" class="skin-rule">完整通关三关且全程少于 02:30，可解锁花灯使者</p>
+    <p id="choice-status" class="choice-status" role="status">点击角色图片，选择一位护灯人</p>
+    <button type="button" class="primary choose-start" id="choose-start" disabled>开始游戏</button>
+    <p class="opening-controls">↑ ↓ ← → 移动　/　空格 挥杆</p>
+  </section>
+  <p class="opening-footer">兴宁客家上灯 · 民俗主题像素小游戏</p>
+</section>
+<main id="game-content" hidden>
+  <header class="masthead"><div class="brand"><span class="brand-icon" aria-hidden="true"></span>兴宁 · 客家上灯</div><span class="edition">像素护灯 / 兴宁上灯之夜</span></header>
+  <section class="intro"><div><p class="eyebrow">一盏花灯，一路守护</p><h1>兴宁客家上灯护灯小游戏</h1><p class="subtitle">提起竹杆，驱走鸡犬。把这盏花灯，平安送到祠堂。</p></div><span class="badge" id="level-badge">01 / 3 · 傍晚请灯</span></section>
+  <section class="game-shell" aria-label="护灯游戏">
+    <div class="hud">
+      <div><div class="meter-head"><span class="hud-label">灯火稳定度</span><span id="stability">100 / 100</span></div><div class="meter" role="progressbar" aria-label="灯火稳定度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="stability-bar"><div class="meter-fill" id="stability-fill"></div></div></div>
+      <div><span class="hud-label">关卡倒计时</span><div class="time-row"><span class="time" id="timer">02:00</span><span class="time-note">送灯至祠堂门口</span></div></div>
+      <div class="hud-actions"><button id="pause" type="button" disabled>暂停 P</button><button id="restart" type="button">重开 R</button></div>
+    </div>
+    <div class="music-controls" role="group" aria-label="背景音乐设置"><button id="music-toggle" type="button" aria-pressed="true">音乐：开</button><label for="music-volume">音量</label><input id="music-volume" type="range" min="0" max="100" value="25" aria-label="背景音乐音量"><output id="music-value" for="music-volume">25%</output><span>原创配乐 · 灯火归祠</span></div>
+    <audio id="background-music" src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/audio/lantern-home.wav" preload="none" loop></audio>
+    <div class="stage">
+      <div class="campaign-clock" aria-label="本次全程用时"><span>全程用时</span><time id="total-time">00:00</time></div>
+      <canvas id="game" width="960" height="540" tabindex="0" aria-label="方向键上下左右移动，空格挥杆。碰撞花灯拾取后送到上方祠堂，连闯三关。P暂停，R重试本关。">请使用支持 HTML Canvas 的浏览器。</canvas>
+      <div class="overlay" id="overlay"><div class="dialog"><img id="result-character" class="result-character" src="https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/player/player.png" alt="护灯人" hidden><div class="dialog-mark" id="dialog-mark">傍晚 · 请灯</div><h2 id="dialog-title">护一盏灯，归祠堂</h2><p id="dialog-description">方向键移动，绕过木头，碰撞拾灯。<br>夜晚先集火烛才出狗，深夜绕行红色大鼓。</p><p id="unlock-message" class="unlock-message" hidden></p><div class="dialog-actions"><button class="secondary-action" id="return-first" type="button" hidden>返回最初关卡</button><button class="primary" id="start" type="button">开始护灯 →</button></div><button type="button" class="return-selection" id="return-selection" hidden>返回角色选择</button><span class="dialog-foot">↑ ↓ ← → 移动 / SPACE 挥杆</span></div></div>
+    </div>
+    <div class="game-caption"><span id="hint" role="status"><span class="status-dot">●</span>准备出发 · 花灯在院落下方</span><div class="legend" aria-label="色块图例"><span class="player">玩家</span><span>花灯</span><span class="chicken">土鸡</span><span class="dog">土狗</span></div></div>
+  </section>
+  <div class="touch-controls" aria-label="触屏操作"><div class="dpad"><span></span><button data-key="ArrowUp" aria-label="向上">↑</button><span></span><button data-key="ArrowLeft" aria-label="向左">←</button><button data-key="ArrowDown" aria-label="向下">↓</button><button data-key="ArrowRight" aria-label="向右">→</button></div><button class="touch-attack" data-key="Space">挥杆</button></div>
+  <section class="instructions" aria-label="游戏说明">
+    <div class="instruction"><span class="step">01</span><div><h3>碰撞拾灯，带它前行</h3><p><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> 移动，碰撞花灯才能拾取。<br>拾取后随身移动，仅仅靠近不会跟随。</p></div></div>
+    <div class="instruction"><span class="step">02</span><div><h3>竹杆在手，鸡犬退散</h3><p><kbd>SPACE</kbd> 向面朝方向挥杆。土鸡会逃跑，<br>土狗会后退，再短暂避开你。</p></div></div>
+    <div class="instruction"><span class="step">03</span><div><h3>傍晚请灯，深夜入祠</h3><p>第一关绕木头；第二关先集齐 3 支火烛才可拾灯、出狗。<br>第三关红色大鼓更小、通路更宽，碰到仍失败；每关 120 秒。</p></div></div>
+  </section>
+  <footer class="footer"><span>兴宁客家上灯 · 民俗主题像素小游戏</span><span>纯 HTML + JavaScript · 无框架</span></footer>
+</main>
+<!-- 合并音乐控制：原 music.js -->
+<script>
+'use strict';
+// Local WAV playback only: no network service, audio framework or game logic.
+class MusicController {
+  constructor(audio, storage, onChange = () => {}) {
+    this.audio = audio; this.storage = storage; this.onChange = onChange;
+    this.enabled = true; this.volume = .25; this.active = false;
+    this.armed = false; this.pending = false; this.blocked = false;
+    try { const s = JSON.parse(storage?.getItem('xingning-lantern.music.v1') || 'null');
+      if (typeof s?.enabled === 'boolean') this.enabled = s.enabled;
+      if (typeof s?.volume === 'number' && Number.isFinite(s.volume)) this.volume = Math.max(0, Math.min(1, s.volume));
+    } catch {}
+    audio.loop = true; audio.volume = this.volume;
+  }
+  save() { try { this.storage?.setItem('xingning-lantern.music.v1', JSON.stringify({enabled:this.enabled,volume:this.volume})); } catch {} }
+  unlock() { this.armed = true; this.blocked = false; this.sync(); }
+  setActive(active) { if (this.active === active) return; this.active = active; this.sync(); }
+  toggle() { this.enabled = !this.enabled; this.save(); this.unlock(); }
+  setVolume(value) {
+    const n = Number(value); if (!Number.isFinite(n)) return;
+    this.volume = Math.max(0, Math.min(1, n)); this.audio.volume = this.volume;
+    this.save(); this.sync();
+  }
+  sync() {
+    const audible = this.armed && this.enabled && this.volume > 0 && this.active;
+    if (!audible) { if (!this.audio.paused) this.audio.pause(); }
+    else if (this.audio.paused && !this.pending && !this.blocked) {
+      this.pending = true;
+      try { Promise.resolve(this.audio.play()).then(() => { this.blocked = false; }, () => { this.blocked = true; }).finally(() => { this.pending = false; this.sync(); }); }
+      catch { this.pending = false; this.blocked = true; }
+    }
+    this.onChange(this);
+  }
+}
+if (typeof module !== 'undefined' && module.exports) module.exports = { MusicController };
+if (typeof document !== 'undefined') {
+  const audio = document.getElementById('background-music');
+  const toggle = document.getElementById('music-toggle'), volume = document.getElementById('music-volume'), value = document.getElementById('music-value');
+  let storage; try { storage = localStorage; } catch {}
+  const music = new MusicController(audio, storage, m => {
+    toggle.textContent = m.blocked ? '点击播放音乐' : m.enabled ? '音乐：开' : '音乐：关';
+    toggle.setAttribute('aria-pressed', String(m.enabled));
+    volume.value = Math.round(m.volume * 100); value.textContent = Math.round(m.volume * 100) + '%';
+  });
+  window.lanternMusic = music; music.sync();
+  toggle.addEventListener('click', () => music.blocked ? music.unlock() : music.toggle());
+  volume.addEventListener('input', () => { music.setVolume(volume.value / 100); music.unlock(); });
+  audio.addEventListener('error', () => { music.blocked = true; music.onChange(music); });
+  document.addEventListener('click', e => {
+    if (e.target.closest('#choose-start, #start, #pause, #restart, #return-first')) music.unlock();
+  });
+}
+
+</script>
+<!-- 合并游戏逻辑：原 game.js -->
+<script>
+'use strict';
+
+// 原生 Canvas 像素游戏；PNG 加载失败时继续使用程序色块兜底。
+const CONFIG = Object.freeze({ width: 960, height: 540, duration: 120,
+  playerSpeed: 145, lanternSpeed: 120, followRadius: 118, followGap: 34,
+  pickupRadius: 24, attackRadius: 54, attackCooldown: 0.42, attackDuration: 0.18, usePNG: true });
+const PNG_ASSETS = Object.freeze({
+  player: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/player/player.png',
+  playerFemale: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/player/female.png',
+  playerLantern: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/player/lantern-envoy.png',
+  storyBackground: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/background/story-weilongwu.png',
+  chickenIdle: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/chicken/idle.png', chickenWalk: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/chicken/walk.png', chickenFlee: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/chicken/flee.png',
+  dogWander: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/dog/wander.png', dogRetreat: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/dog/retreat.png',
+  lantern: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/lantern/lantern.png', background: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/background/village-dusk.png',
+  background2: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/background/ritual-night.png', background3: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/background/offering-midnight.png',
+  bomb: 'https://xingning-lantern-guard.wigglygnome8.chatgpt.site/assets/obstacles/drum.png'
+});
+// Precomputed alpha bounds keep file:// play independent of canvas readback permissions.
+const SPRITE_BOUNDS = Object.freeze({"lantern":[123,9,841,1432],"chickenFlee":[16,287,1060,1020],"playerLantern":[215,10,730,1418],"bomb":[40,121,1025,1196],"background2":[0,0,1672,941],"background":[0,6,1672,935],"chickenWalk":[31,209,1040,1121],"dogRetreat":[49,217,1016,1033],"storyBackground":[0,0,1672,941],"dogWander":[63,204,970,1090],"player":[204,25,741,1401],"chickenIdle":[43,62,1015,1349],"playerFemale":[146,72,802,1356],"background3":[0,0,1671,941]});
+const LEVELS = Object.freeze([
+  Object.freeze({ name: '傍晚 · 请灯', phase: 'dusk', sky: '#d9a16b', background: 'background', chickens: 5, dogs: 0, candles: 0, damage: 1, pursuit: 1, route: null }),
+  Object.freeze({ name: '夜晚 · 围拳铺', phase: 'night', sky: '#1b2e43', background: 'background2', chickens: 7, dogs: 2, candles: 3, damage: 1.2, pursuit: 1.1, route: null }),
+  Object.freeze({ name: '深夜 · 祖堂献灯', phase: 'midnight', sky: '#070f20', background: 'background3', chickens: 8, dogs: 3, candles: 0, damage: 1.35, pursuit: 1.15,
+    route: Object.freeze({ left: 340, right: 620, top: 190 }) })
+]);
+const clamp = (n, low, high) => Math.max(low, Math.min(high, n));
+const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+function direction(from, to) {
+  const x = to.x - from.x, y = to.y - from.y, d = Math.hypot(x, y);
+  return d > 0.001 ? { x: x / d, y: y / d } : { x: 0, y: -1 };
+}
+function move(entity, vector, speed, dt) {
+  entity.x = clamp(entity.x + vector.x * speed * dt, 32, CONFIG.width - 32);
+  entity.y = clamp(entity.y + vector.y * speed * dt, 146, CONFIG.height - 26);
+}
+
+class Game {
+  constructor(random = Math.random) { this.random = random; this.levelIndex = 0; this.reset(); this.state = 'ready'; }
+  get level() { return LEVELS[this.levelIndex]; }
+  get candlesCollected() { return this.candles.filter(c => c.collected).length; }
+  get canPickupLantern() { return this.candlesCollected >= this.level.candles; }
+  reset(levelIndex = this.levelIndex) {
+    this.levelIndex = clamp(Math.trunc(Number(levelIndex) || 0), 0, LEVELS.length - 1);
+    this.player = { x: 480, y: 452, facing: { x: 0, y: -1 } };
+    this.lantern = { x: 480, y: 496 };
+    this.gate = { x: 418, y: 143, width: 124, height: 42 };
+    this.stability = 100; this.remaining = CONFIG.duration; this.elapsed = 0;
+    this.cooldown = 0; this.swing = 0; this.swingFacing = { x: 0, y: -1 };
+    this.hitAnimals = new Set(); this.particles = []; this.repels = 0;
+    this.pickedUp = false; this.following = false; this.playerInterference = 0;
+    this.disturbers = 0; this.reason = '';
+    this.lanternLit = this.levelIndex === 2; this.dogsReleased = this.levelIndex === 2;
+    this.candles = [{ x: 390, y: 430 }, { x: 570, y: 345 }, { x: 420, y: 250 }]
+      .slice(0, this.level.candles).map(c => ({ ...c, collected: false }));
+    this.logs = this.levelIndex === 0 ? [{ x: 410, y: 355, width: 100, height: 24 }, { x: 365, y: 260, width: 100, height: 24 }] : [];
+    this.route = this.level.route; this.explosion = null; this.bombs = [];
+    if (this.route) {
+      // 三条交错危险带封住所有直线列，仅留下右、左、右的安全通路。
+      for (const row of [{ y: 400, xs: [375, 420, 465] }, { y: 310, xs: [495, 540, 585] }, { y: 225, xs: [375, 420, 465] }]) {
+        for (const x of row.xs) this.bombs.push({ x, y: row.y, radius: 12 });
+      }
+    }
+    this.animals = [];
+    // 所有实体由代码生成；较靠近中央的鸡犬保证护送路线有遭遇。
+    const initialDogs = this.levelIndex === 1 ? 0 : this.level.dogs;
+    for (let i = 0; i < this.level.chickens + initialDogs; i++) {
+      const type = i < this.level.chickens ? 'chicken' : 'dog';
+      const side = i % 2 ? 1 : -1;
+      const x = 480 + side * (65 + this.random() * 230);
+      const y = 205 + this.random() * 205;
+      this.animals.push(this.makeAnimal(type, x, y));
+    }
+  }
+  start(levelIndex = this.levelIndex) { this.reset(levelIndex); this.state = 'playing'; }
+  retryLevel() { this.start(this.levelIndex); }
+  restartCampaign() { this.start(0); }
+  releaseDogs() {
+    if (this.levelIndex !== 1 || this.dogsReleased || !this.canPickupLantern) return;
+    this.dogsReleased = true; this.lanternLit = true;
+    for (let i = 0; i < this.level.dogs; i++) this.animals.push(this.makeAnimal('dog', i % 2 ? 780 : 180, 260 + this.random() * 140));
+  }
+  collectCandles() {
+    for (const c of this.candles) if (!c.collected && distance(this.player, c) <= 22) {
+      c.collected = true;
+      this.particles.push({ x: c.x, y: c.y - 18, label: '火烛 +1', life: 0.8, max: 0.8 });
+    }
+    this.releaseDogs();
+  }
+  movePlayer(vector, speed, dt) {
+    // 有界小步长 + 分轴阻挡，防止穿木头，同时允许沿边缘滑动和绕行。
+    const steps = Math.max(1, Math.ceil(speed * dt / 6));
+    const blocked = () => this.logs.some(log => this.player.x > log.x - 12 && this.player.x < log.x + log.width + 12 && this.player.y > log.y - 12 && this.player.y < log.y + log.height + 12);
+    for (let i = 0; i < steps; i++) {
+      const x = this.player.x; move(this.player, { x: vector.x, y: 0 }, speed, dt / steps); if (blocked()) this.player.x = x;
+      const y = this.player.y; move(this.player, { x: 0, y: vector.y }, speed, dt / steps); if (blocked()) this.player.y = y;
+    }
+  }
+  nextLevel() {
+    if (this.state !== 'cleared' || this.levelIndex >= LEVELS.length - 1) return false;
+    this.start(this.levelIndex + 1); return true;
+  }
+  togglePause() {
+    if (this.state === 'playing') this.state = 'paused';
+    else if (this.state === 'paused') this.state = 'playing';
+  }
+  makeAnimal(type, x, y) {
+    const angle = this.random() * Math.PI * 2;
+    return { type, x, y, state: type === 'chicken' ? 'idle' : 'wander',
+      timer: 0.8 + this.random() * 1.8, velocity: { x: Math.cos(angle), y: Math.sin(angle) },
+      home: { x, y }, target: null, focus: null, escapeTarget: null, retreatLeft: 0,
+      escape: { x: 1, y: 0 }, immunity: 0, flash: 0, phase: this.random() * 6.28 };
+  }
+  attack() {
+    if (this.state !== 'playing' || this.cooldown > 0) return false;
+    this.cooldown = CONFIG.attackCooldown; this.swing = CONFIG.attackDuration;
+    this.swingFacing = { ...this.player.facing }; this.hitAnimals.clear(); this.hitInArc(); return true;
+  }
+  hitInArc() {
+    for (const a of this.animals) {
+      const d = distance(this.player, a), vector = direction(this.player, a);
+      const dot = vector.x * this.swingFacing.x + vector.y * this.swingFacing.y;
+      // 正面约 70°；取消旧版近身全方向命中，身后贴身也不会中杆。
+      if (d > CONFIG.attackRadius || (d > 0.001 && dot < Math.cos(35 * Math.PI / 180)) || this.hitAnimals.has(a)) continue;
+      this.hitAnimals.add(a); this.repels++; a.escape = vector;
+      a.state = a.type === 'chicken' ? 'flee' : 'retreat';
+      a.timer = a.type === 'chicken' ? 1.8 : 0.8;
+      a.immunity = a.type === 'chicken' ? 3.3 : 3.5; a.flash = 0.12;
+      a.retreatLeft = 60;
+      if (a.type === 'chicken') {
+        // 从可达的短距离落点中选离灯、离玩家较远的一处，不沿围墙反复折返。
+        let bestScore = -Infinity;
+        const angle = Math.atan2(vector.y, vector.x);
+        for (let i = 0; i < 16; i++) {
+          const theta = angle + i * Math.PI / 8;
+          const point = { x: clamp(a.x + Math.cos(theta) * 150, 36, 924),
+            y: clamp(a.y + Math.sin(theta) * 150, 150, 510) };
+          const score = distance(point, this.lantern) + 0.45 * distance(point, this.player);
+          if (score > bestScore) { bestScore = score; a.escapeTarget = point; }
+        }
+        a.escape = direction(a, a.escapeTarget);
+      }
+      this.particles.push({ x: a.x, y: a.y - 12, label: a.type === 'chicken' ? '咯！' : '汪！', life: 0.65, max: 0.65 });
+    }
+  }
+  settleAnimal(a) {
+    // 逃离后以新位置为闲逛中心，不再跑回原来围灯的位置。
+    a.home = { x: a.x, y: a.y }; a.target = null; a.focus = null;
+    a.state = 'idle'; a.timer = 1.2 + this.random() * 1.8;
+  }
+  chooseWanderTarget(a) {
+    const angle = this.random() * Math.PI * 2;
+    const radius = 12 + this.random() * (a.type === 'chicken' ? 36 : 58);
+    a.target = { x: clamp(a.home.x + Math.cos(angle) * radius, 36, 924),
+      y: clamp(a.home.y + Math.sin(angle) * radius, 150, 510) };
+    a.state = 'wander'; a.timer = 6;
+  }
+  updateAnimal(a, dt) {
+    a.timer -= dt; a.immunity = Math.max(0, a.immunity - dt); a.flash = Math.max(0, a.flash - dt);
+    const lanternDistance = distance(a, this.lantern);
+    if (a.state === 'flee') {
+      const safe = lanternDistance >= 125 && distance(a, this.player) >= 85;
+      if ((safe && a.timer <= 1.62) || a.timer <= 0 || distance(a, a.escapeTarget) <= 3) {
+        this.settleAnimal(a); a.immunity = Math.max(a.immunity, 1.5); return;
+      }
+      a.escape = direction(a, a.escapeTarget);
+      move(a, a.escape, Math.min(145, distance(a, a.escapeTarget) / dt), dt);
+      return;
+    }
+    if (a.state === 'retreat') {
+      const before = { x: a.x, y: a.y };
+      move(a, a.escape, Math.min(100, a.retreatLeft / dt), dt);
+      const moved = distance(before, a); a.retreatLeft = Math.max(0, a.retreatLeft - moved);
+      if (a.retreatLeft <= 0.01 || a.timer <= 0 || moved < 0.001) { a.state = 'avoid'; a.timer = 2.5; }
+      return;
+    }
+    if (a.state === 'avoid') {
+      // 玩家不追过来就停留；不在回避状态中一直无目的地向外跑。
+      if (distance(a, this.player) < 95) {
+        a.escape = direction(this.player, a);
+        // 边缘阻挡时沿围墙侧移，避免立刻反向冲回玩家/花灯。
+        if ((a.x <= 34 && a.escape.x < 0) || (a.x >= 926 && a.escape.x > 0)) a.escape = { x: 0, y: a.y > 330 ? -1 : 1 };
+        if ((a.y <= 148 && a.escape.y < 0) || (a.y >= 512 && a.escape.y > 0)) a.escape = { x: a.x > 480 ? -1 : 1, y: 0 };
+        move(a, a.escape, Math.min(42, (95 - distance(a, this.player)) / dt), dt);
+      }
+      if (a.timer <= 0) { this.settleAnimal(a); a.immunity = Math.max(a.immunity, 1.2); }
+      return;
+    }
+    // 开始追灯必须很近；已靠近时稍宽的退出半径避免边界反复切状态。
+    const engaged = ['approach', 'disturb', 'approachPlayer', 'botherPlayer'].includes(a.state);
+    const detectionRadius = a.type === 'chicken' ? 72 : 80;
+    const releaseRadius = a.type === 'chicken' ? 100 : 110;
+    if (a.immunity === 0 && lanternDistance <= (a.focus === 'lantern' ? releaseRadius : detectionRadius)) {
+      a.focus = 'lantern';
+      if (lanternDistance > 30) {
+        a.state = 'approach'; a.velocity = direction(a, this.lantern);
+        move(a, a.velocity, Math.min((a.type === 'chicken' ? 32 : 26) * this.level.pursuit, (lanternDistance - 28) / dt), dt);
+      } else {
+        a.state = 'disturb'; this.disturbers++;
+        this.stability = Math.max(0, this.stability - (a.type === 'chicken' ? 8 : 12) * this.level.damage * dt);
+      }
+      return;
+    }
+    // 附近花灯始终优先；无可干扰花灯时主动靠近玩家，贴近后减速干扰。
+    const playerDistance = distance(a, this.player);
+    if (a.immunity === 0 && playerDistance <= (a.focus === 'player' ? 180 : 150)) {
+      a.focus = 'player';
+      if (playerDistance > 30) {
+        a.state = 'approachPlayer'; a.velocity = direction(a, this.player);
+        move(a, a.velocity, Math.min((a.type === 'chicken' ? 28 : 22) * this.level.pursuit, (playerDistance - 28) / dt), dt);
+      } else a.state = 'botherPlayer';
+      return;
+    }
+    if (engaged) { this.settleAnimal(a); return; }
+    if (a.state === 'idle' && a.timer <= 0) this.chooseWanderTarget(a);
+    if (a.state === 'wander') {
+      if (!a.target) this.chooseWanderTarget(a);
+      const gap = distance(a, a.target);
+      if (gap <= 2 || a.timer <= 0) {
+        a.state = 'idle'; a.target = null;
+        a.timer = a.type === 'chicken' ? 1.5 + this.random() * 2 : 0.6 + this.random();
+      } else {
+        a.velocity = direction(a, a.target);
+        move(a, a.velocity, Math.min(a.type === 'chicken' ? 14 : 18, gap / dt), dt);
+      }
+    }
+  }
+  countPlayerInterference() {
+    return this.animals.filter(a => a.immunity === 0 && !['flee', 'retreat', 'avoid'].includes(a.state) && distance(a, this.player) <= 42).length;
+  }
+  findBombHit(from, to) {
+    const dx = to.x - from.x, dy = to.y - from.y, lengthSquared = dx * dx + dy * dy;
+    return this.bombs.find(b => {
+      const t = lengthSquared ? clamp(((b.x - from.x) * dx + (b.y - from.y) * dy) / lengthSquared, 0, 1) : 0;
+      return Math.hypot(b.x - (from.x + dx * t), b.y - (from.y + dy * t)) <= b.radius + 12;
+    });
+  }
+  update(dt, keys = new Set()) {
+    if (this.state !== 'playing') return;
+    dt = clamp(dt, 0, 0.05); this.elapsed += dt;
+    this.remaining = Math.max(0, this.remaining - dt);
+    this.cooldown = Math.max(0, this.cooldown - dt); this.swing = Math.max(0, this.swing - dt);
+    this.playerInterference = this.countPlayerInterference();
+    const slow = this.playerInterference ? Math.max(0.5, 1 - (0.3 + 0.08 * (this.playerInterference - 1)) * this.level.damage) : 1;
+    let dx = (keys.has('ArrowRight') ? 1 : 0) - (keys.has('ArrowLeft') ? 1 : 0);
+    let dy = (keys.has('ArrowDown') ? 1 : 0) - (keys.has('ArrowUp') ? 1 : 0);
+    const previousPosition = { x: this.player.x, y: this.player.y };
+    if (dx || dy) {
+      const length = Math.hypot(dx, dy); dx /= length; dy /= length;
+      this.player.facing = { x: dx, y: dy }; this.movePlayer(this.player.facing, CONFIG.playerSpeed * slow, dt);
+    }
+    if (this.route && this.player.y >= this.route.top) this.player.x = clamp(this.player.x, this.route.left + 12, this.route.right - 12);
+    const bomb = this.findBombHit(previousPosition, this.player);
+    if (bomb) {
+      this.state = 'lost'; this.reason = '碰到红色大鼓，护送失败！重试本关，沿警示圈外左右交错绕行。';
+      this.explosion = { x: bomb.x, y: bomb.y }; return;
+    }
+    if (keys.has('Space')) this.attack();
+    if (this.swing > 0) this.hitInArc();
+    this.collectCandles();
+    const gap = distance(this.player, this.lantern);
+    if (!this.pickedUp && this.canPickupLantern && gap <= CONFIG.pickupRadius) this.pickedUp = true;
+    this.following = this.pickedUp;
+    if (this.pickedUp) {
+      this.lantern.x = clamp(this.player.x + 24, 18, CONFIG.width - 18);
+      this.lantern.y = clamp(this.player.y + 6, 146, CONFIG.height - 26);
+    }
+    this.disturbers = 0;
+    for (const a of this.animals) this.updateAnimal(a, dt);
+    this.playerInterference = this.countPlayerInterference();
+    for (const p of this.particles) { p.life -= dt; p.y -= dt * 24; }
+    this.particles = this.particles.filter(p => p.life > 0);
+    if (this.stability <= 0) { this.state = 'lost'; this.reason = '灯火熄灭了，回到院落再护送一次吧。'; }
+    else if (this.remaining <= 0) { this.state = 'lost'; this.reason = '时间到了，花灯还没抵达祠堂。再试一次吧。'; }
+    else if (this.pickedUp && this.canPickupLantern && this.lantern.x >= this.gate.x && this.lantern.x <= this.gate.x + this.gate.width && this.lantern.y >= this.gate.y && this.lantern.y <= this.gate.y + this.gate.height) this.state = this.levelIndex === LEVELS.length - 1 ? 'won' : 'cleared';
+  }
+}
+
+// 并行预加载透明 PNG。未启用或单张失败时使用对应的程序色块，不阻塞游戏。
+const UNLOCK_SECONDS = 150;
+const UNLOCK_STORAGE_KEY = 'xingning-lantern-guard.skins.v1';
+const characterKey = character => character === 'lantern' ? 'playerLantern' : character === 'female' ? 'playerFemale' : 'player';
+const characterName = character => character === 'lantern' ? '花灯使者' : character === 'female' ? '女生' : '男生';
+function clockText(seconds) { const s = Math.floor(Math.max(0, seconds)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; }
+class CampaignRun {
+  constructor() { this.seconds = 0; this.active = false; this.finished = false; this.full = false; this.completed = 0; this.next = 0; }
+  reset(level = 0) { this.seconds = 0; this.active = true; this.finished = false; this.full = level === 0; this.completed = 0; this.next = level; }
+  tick(delta, state) { if (this.active && state === 'playing' && Number.isFinite(delta)) this.seconds += Math.max(0, delta); }
+  completeLevel(level) {
+    if (!this.active || this.finished) return;
+    if (level !== this.next) this.full = false;
+    this.completed++; this.next = level + 1;
+    if (level === LEVELS.length - 1) { this.finished = true; this.active = false; }
+  }
+  fail() { this.seconds = 0; this.active = false; this.full = false; }
+  get canUnlock() { return this.finished && this.full && this.completed === LEVELS.length && this.next === LEVELS.length && this.seconds < UNLOCK_SECONDS; }
+}
+class SkinUnlocks {
+  constructor(storage) {
+    this.storage = storage; this.unlocked = false;
+    try { if (storage === undefined) this.storage = globalThis.localStorage; this.unlocked = JSON.parse(this.storage?.getItem(UNLOCK_STORAGE_KEY) || 'null')?.lantern === true; } catch {}
+  }
+  unlock() {
+    this.unlocked = true;
+    try { if (!this.storage) return false; this.storage.setItem(UNLOCK_STORAGE_KEY, JSON.stringify({ version: 1, lantern: true })); return true; } catch { return false; }
+  }
+}
+const STORY_LINES = Object.freeze([
+  '北宋年间，兴宁学子罗孟郊高中探花，获皇帝御赐六盏宫灯。',
+  '回乡之后，他将宫灯分赠乡里五大家族，相约每年元宵悬灯祭祖。',
+  '客家话里，“灯”谐音“丁”，花灯承载着族人祈求人丁兴旺的心愿。',
+  '这项上灯习俗流传八百多年，成为广东省级非物质文化遗产。',
+  '如今，轮到你接过这盏花灯，护送它前往祖堂完成献灯仪式。',
+  '路上土鸡、土狗会前来干扰，祠堂前还有大鼓阻挡去路。',
+  '收集火烛，保护花灯，平安将灯火送入祖堂。'
+]);
+class StoryPlayback {
+  constructor() { this.line = 0; this.visible = ''; this.done = false; this.startedAt = null; }
+  start(now) { this.line = 0; this.visible = ''; this.done = false; this.startedAt = now; }
+  advance(now) {
+    if (this.done || this.startedAt === null) return;
+    while (this.line < STORY_LINES.length) {
+      const text = STORY_LINES[this.line], count = Math.max(0, Math.floor((now - this.startedAt) / 28));
+      this.visible = text.slice(0, count);
+      if (count < text.length) return;
+      if (this.line === STORY_LINES.length - 1) { this.done = true; return; }
+      const nextAt = this.startedAt + text.length * 28 + 240;
+      if (now < nextAt) return;
+      this.line++; this.startedAt = nextAt;
+    }
+  }
+}
+class OpeningFlow {
+  constructor(unlocks = new SkinUnlocks()) { this.phase = 'loading'; this.selected = null; this.unlocks = unlocks; }
+  loaded() { if (this.phase === 'loading') this.phase = 'story'; }
+  continueStory(finished) { if (this.phase !== 'story' || !finished) return false; this.phase = 'selecting'; return true; }
+  choose(character) {
+    if (this.phase !== 'selecting' || !(['male', 'female'].includes(character) || character === 'lantern' && this.unlocks.unlocked)) return false;
+    this.selected = character; return true;
+  }
+  begin() {
+    if (this.phase !== 'selecting' || !this.selected) return false;
+    this.phase = 'playing'; return true;
+  }
+  selectAgain() { this.phase = 'selecting'; this.selected = null; }
+}
+async function preloadAssets(enabled = CONFIG.usePNG, onProgress = () => {}) {
+  const images = {};
+  if (!enabled) return images;
+  let completed = 0; const total = Object.keys(PNG_ASSETS).length;
+  await Promise.all(Object.entries(PNG_ASSETS).map(([key, path]) => new Promise(resolve => {
+    const img = new Image();
+    const timeout = setTimeout(() => finish(false), 5000);
+    let done = false;
+    // 超时先使用色块兜底；慢网图片稍后加载成功时仍接入同一个资源对象。
+    function finish(ok) { if (ok) images[key] = img; if (done) return; done = true; clearTimeout(timeout); onProgress(++completed, total); resolve(); }
+    img.onload = () => finish(img.naturalWidth > 0); img.onerror = () => finish(false); img.src = path;
+  })));
+  return images;
+}
+
+function boot() {
+  const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+  if (!ctx) { document.getElementById('dialog-description').textContent = '当前浏览器无法创建 Canvas，请使用现代浏览器。'; return; }
+  ctx.imageSmoothingEnabled = false;
+  const game = new Game(), keys = new Set(), unlocks = new SkinUnlocks(), opening = new OpeningFlow(unlocks), run = new CampaignRun(); let images = {};
+  const openingScreen = document.getElementById('opening-screen'), loadingPane = document.getElementById('loading-pane');
+  const choosePane = document.getElementById('choose-pane'), content = document.getElementById('game-content');
+  const chooseStart = document.getElementById('choose-start'), resultCharacter = document.getElementById('result-character');
+  const cards = [...document.querySelectorAll('[data-character]')];
+  const storyPane = document.getElementById('story-pane'), storyContinue = document.getElementById('story-continue');
+  const story = new StoryPlayback(), storyRows = STORY_LINES.map(() => { const p = document.createElement('p'); document.getElementById('story-text').append(p); return p; });
+  function storyFrame(now) {
+    story.advance(now);
+    for (let i = 0; i <= story.line; i++) {
+      const text = i < story.line ? STORY_LINES[i] : story.visible;
+      if (storyRows[i].textContent !== text) storyRows[i].textContent = text;
+      storyRows[i].classList.toggle('typing', i === story.line && !story.done);
+    }
+    if (story.done) { storyContinue.hidden = false; document.getElementById('story-status').textContent = '故事讲述完毕，可以继续选择护灯人。'; return; }
+    requestAnimationFrame(storyFrame);
+  }
+  storyContinue.addEventListener('click', () => {
+    if (!opening.continueStory(story.done)) return;
+    storyPane.hidden = true; choosePane.hidden = false; openingScreen.classList.remove('story-mode');
+    cards[0].focus({ preventScroll: true }); window.scrollTo(0, 0);
+  });
+  const returnSelection = document.getElementById('return-selection'), unlockMessage = document.getElementById('unlock-message');
+  function refreshSkins() {
+    document.querySelector('[data-character="lantern"]').hidden = !unlocks.unlocked;
+    document.querySelector('.character-choices').classList.toggle('has-unlocked', unlocks.unlocked);
+    document.getElementById('skin-rule').textContent = unlocks.unlocked ? '花灯使者已解锁 · 选择即可使用' : '完整通关三关且全程少于 02:30，可解锁花灯使者';
+  }
+  refreshSkins();
+  let resourceProgress = 0, resourcesReady = false, finishedAt = 0;
+  const loadingStart = performance.now();
+  preloadAssets(true, (done, total) => { resourceProgress = done / total; }).then(loaded => { images = loaded; resourcesReady = true; });
+  function openingFrame(now) {
+    const value = Math.floor(Math.min(resourceProgress, (now - loadingStart) / 900) * 100);
+    document.getElementById('loading-fill').style.width = `${value}%`;
+    document.getElementById('loading-progress').setAttribute('aria-valuenow', value);
+    document.getElementById('loading-value').textContent = `${value}%`;
+    if (resourcesReady && value === 100) {
+      if (!finishedAt) finishedAt = now;
+      if (now - finishedAt >= 180) {
+        opening.loaded(); loadingPane.hidden = true; storyPane.hidden = false; openingScreen.classList.add('story-mode');
+        storyPane.focus({ preventScroll: true }); story.start(now); requestAnimationFrame(storyFrame); return;
+      }
+    }
+    requestAnimationFrame(openingFrame);
+  }
+  requestAnimationFrame(openingFrame);
+  for (const card of cards) card.addEventListener('click', () => {
+    if (!opening.choose(card.dataset.character)) return;
+    for (const item of cards) item.setAttribute('aria-pressed', String(item === card));
+    chooseStart.disabled = false;
+    document.getElementById('choice-status').textContent = `已选择${characterName(opening.selected)} · 准备护灯`;
+  });
+  chooseStart.addEventListener('click', () => {
+    if (!opening.begin()) return;
+    openingScreen.hidden = true; content.hidden = false;
+    resultCharacter.src = PNG_ASSETS[characterKey(opening.selected)];
+    resultCharacter.alt = `${characterName(opening.selected)}护灯人`;
+    start();
+  });
+  returnSelection.addEventListener('click', () => {
+    if (!['won', 'lost'].includes(game.state)) return;
+    keys.clear(); opening.selectAgain(); run.fail(); game.reset(0); game.state = 'ready'; previousState = '';
+    refreshSkins(); for (const card of cards) card.setAttribute('aria-pressed', 'false');
+    chooseStart.disabled = true; document.getElementById('choice-status').textContent = '点击角色图片，选择一位护灯人';
+    loadingPane.hidden = true; choosePane.hidden = false; openingScreen.hidden = false; content.hidden = true;
+    accumulator = 0; last = performance.now(); syncUI(); cards[0].focus({ preventScroll: true });
+  });
+  const ui = Object.fromEntries(['stability', 'stability-fill', 'stability-bar', 'timer', 'pause', 'restart', 'overlay', 'start', 'return-first', 'dialog-mark', 'dialog-title', 'dialog-description', 'hint', 'level-badge'].map(id => [id, document.getElementById(id)]));
+  let previousState = '', last = performance.now(), accumulator = 0;
+  const bg = document.createElement('canvas'); bg.width = 960; bg.height = 540;
+  const b = bg.getContext('2d');
+  function block(c, x, y, w, h, fill, edge = '#0b1418', line = 3) {
+    x = Math.round(x); y = Math.round(y); w = Math.round(w); h = Math.round(h);
+    c.fillStyle = edge; c.fillRect(x, y, w, h); c.fillStyle = fill; c.fillRect(x + line, y + line, w - line * 2, h - line * 2);
+  }
+  function label(c, text, x, y, color = '#f1dfb3', size = 12) {
+    c.font = `${size}px "Microsoft YaHei",sans-serif`; c.textAlign = 'center'; c.fillStyle = color; c.fillText(text, Math.round(x), Math.round(y));
+  }
+  function makeBackground() {
+    b.fillStyle = '#1c3035'; b.fillRect(0, 0, 960, 540);
+    // 程序生成地砖、碎石与夜空，装饰不参与碰撞。
+    let seed = 1837; const rand = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    for (let i = 0; i < 40; i++) { b.fillStyle = '#728782'; b.fillRect(Math.floor(rand() * 240) * 4, Math.floor(rand() * 20) * 4, 2, 2); }
+    b.fillStyle = '#a9bfa6'; b.fillRect(806, 24, 22, 22); b.fillStyle = '#1c3035'; b.fillRect(814, 18, 20, 20);
+    b.fillStyle = '#354341'; b.fillRect(0, 126, 960, 414);
+    for (let row = 0; row < 12; row++) for (let col = 0; col < 24; col++) {
+      const x = col * 44 + (row % 2) * 22 - 22, y = 142 + row * 36;
+      b.fillStyle = rand() > 0.5 ? '#384745' : '#32413f'; b.fillRect(x + 2, y + 2, 41, 33);
+      b.fillStyle = '#293935'; b.fillRect(x + 4, y + 33, 37, 2);
+    }
+    for (let i = 0; i < 65; i++) { const x = rand() * 960, y = 180 + rand() * 345; b.fillStyle = '#586153'; b.fillRect(Math.round(x / 4) * 4, Math.round(y / 4) * 4, 4, 3); }
+    // 中央护送石径，由规则铺设；箭头引导向上。
+    for (let y = 177; y < 520; y += 32) for (let i = 0; i < 4; i++) block(b, 407 + i * 37, y, 35, 28, '#59605a', '#333e3a', 2);
+    for (let y = 248; y <= 408; y += 80) { b.fillStyle = '#8c8c6c'; b.fillRect(477, y, 6, 12); b.fillRect(471, y + 6, 6, 6); b.fillRect(483, y + 6, 6, 6); }
+    // 夜晚祠堂色块占位。
+    block(b, 215, 77, 530, 88, '#777b69');
+    for (const x of [240, 315, 620, 695]) { block(b, x, 104, 28, 49, '#353f3a'); b.fillStyle = '#aaa185'; b.fillRect(x + 12, 108, 3, 42); }
+    block(b, 397, 83, 166, 77, '#202b2b'); block(b, 422, 96, 116, 70, '#282e2b');
+    for (const x of [412, 540]) block(b, x, 75, 12, 89, '#955548', '#141e21', 2);
+    for (let step = 0; step < 5; step++) block(b, 184 + step * 20, 61 - step * 9, 592 - step * 40, 15, step % 2 ? '#48534c' : '#667063', '#142123', 3);
+    block(b, 422, 54, 116, 31, '#473c2d', '#101a1c', 3); label(b, '祠 堂', 480, 76, '#e4bd78', 16);
+    for (const x of [285, 656]) { b.fillStyle = '#171f21'; b.fillRect(x + 8, 67, 3, 17); block(b, x, 79, 20, 28, '#d28b51', '#201c1a', 3); b.fillStyle = '#e7b972'; b.fillRect(x + 8, 85, 4, 16); b.fillRect(x + 7, 106, 5, 8); }
+    for (let i = 0; i < 3; i++) block(b, 390 - i * 10, 154 + i * 8, 180 + i * 20, 10, '#878671', '#37413a', 2);
+    for (const side of [-1, 1]) {
+      const x = side < 0 ? 33 : 851;
+      for (let y = 226; y < 500; y += 190) {
+        block(b, x + 33, y + 31, 14, 60, '#665644');
+        block(b, x + 8, y + 8, 65, 38, '#405549', '#1c2d2b', 4);
+        block(b, x, y + 26, 88, 32, '#3b5146', '#1c2d2b', 4);
+        block(b, x + 18, y, 46, 33, '#4c6150', '#1c2d2b', 4);
+        block(b, x + 10, y + 86, 71, 16, '#52594a', '#24332e', 3);
+      }
+    }
+    block(b, 0, 526, 960, 14, '#6a6b55', '#202e2b', 3);
+  }
+  makeBackground();
+  const spriteBounds = new WeakMap();
+  function boundsFor(img, key) {
+    if (SPRITE_BOUNDS[key]) return SPRITE_BOUNDS[key];
+    if (spriteBounds.has(img)) return spriteBounds.get(img);
+    const scan = document.createElement('canvas'); scan.width = img.naturalWidth; scan.height = img.naturalHeight;
+    const sc = scan.getContext('2d', { willReadFrequently: true }); sc.drawImage(img, 0, 0);
+    const data = sc.getImageData(0, 0, scan.width, scan.height).data;
+    let left = scan.width, top = scan.height, right = 0, bottom = 0;
+    for (let yy = 0; yy < scan.height; yy++) for (let xx = 0; xx < scan.width; xx++) {
+      if (data[(yy * scan.width + xx) * 4 + 3] > 32) {
+        left = Math.min(left, xx); top = Math.min(top, yy); right = Math.max(right, xx); bottom = Math.max(bottom, yy);
+      }
+    }
+    const bounds = left <= right ? [left, top, right - left + 1, bottom - top + 1] : [0, 0, scan.width, scan.height];
+    spriteBounds.set(img, bounds); return bounds;
+  }
+  function sprite(key, x, y, w, h, flip = false) {
+    if (!images[key]) return false;
+    ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if (flip) ctx.scale(-1, 1);
+    ctx.drawImage(images[key], ...boundsFor(images[key], key), -Math.round(w / 2), -h, w, h); ctx.restore(); return true;
+  }
+  function drawPlayer() {
+    const p = game.player, x = Math.round(p.x), y = Math.round(p.y);
+    if (!sprite(characterKey(opening.selected), x, y + 12, 38, 52, p.facing.x < 0)) {
+    const walk = (keys.has('ArrowUp') || keys.has('ArrowLeft') || keys.has('ArrowDown') || keys.has('ArrowRight')) && game.state === 'playing';
+      const step = walk ? Math.floor(game.elapsed * 9) % 2 * 3 : 0;
+      block(ctx, x - 12, y - 27, 24, 18, '#d7bc91');
+      block(ctx, x - 15, y - 13, 30, 25, opening.selected === 'lantern' ? '#b8393b' : '#7aa9a5');
+      if (opening.selected === 'lantern') block(ctx, x - 14, y - 32, 28, 8, '#e8b65c', '#0b1418', 2);
+      if (opening.selected === 'female') {
+        block(ctx, x - 16, y - 22, 6, 18, '#24232d', '#0b1418', 1);
+        block(ctx, x + 10, y - 22, 6, 18, '#24232d', '#0b1418', 1);
+      }
+      block(ctx, x - 11, y + 9, 10, 10 + step, '#39474c', '#0b1418', 2);
+      block(ctx, x + 1, y + 9, 10, 13 - step, '#39474c', '#0b1418', 2);
+      const eyeX = p.facing.x > 0 ? x + 5 : p.facing.x < 0 ? x - 8 : x - 5;
+      ctx.fillStyle = '#172026'; ctx.fillRect(eyeX, y - 20, 3, 3);
+      if (!p.facing.x) ctx.fillRect(x + 3, y - 20, 3, 3);
+    }
+    // 竹杆方向和攻击命中区域使用同一个 facing。
+    const f = game.swing > 0 ? game.swingFacing : p.facing;
+    const baseAngle = Math.atan2(f.y, f.x);
+    const angle = baseAngle + (game.swing > 0 ? (1 - game.swing / CONFIG.attackDuration) * 1.9 - 0.95 : 0.2);
+    const bx = x + Math.cos(angle) * 63, by = y + Math.sin(angle) * 63;
+    ctx.lineCap = 'square'; ctx.strokeStyle = '#0c1417'; ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(bx, by); ctx.stroke();
+    ctx.strokeStyle = '#c8b57a'; ctx.lineWidth = 4; ctx.stroke();
+    for (let i = 1; i < 4; i++) { const sx = x + (bx - x) * i / 4, sy = y + (by - y) * i / 4; ctx.fillStyle = '#726b48'; ctx.fillRect(Math.round(sx) - 2, Math.round(sy) - 2, 4, 4); }
+    if (game.swing > 0) {
+      ctx.strokeStyle = '#f3d28b'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, 75, baseAngle - 1.35, baseAngle + 1.35); ctx.stroke();
+    }
+  }
+  function drawLantern() {
+    const l = game.lantern, x = Math.round(l.x), y = Math.round(l.y);
+    ctx.save(); if (!game.lanternLit) ctx.filter = 'brightness(0.48)';
+    const drawn = sprite('lantern', x, y + 15, 34, 50); ctx.restore();
+    if (!drawn) {
+      block(ctx, x - 7, y - 30, 14, 6, '#d6ac62', '#151d1d', 2);
+      block(ctx, x - 16, y - 25, 32, 34, !game.lanternLit ? '#725f47' : game.stability < 25 ? '#b06b46' : '#e2aa5b');
+      block(ctx, x - 10, y - 19, 20, 23, game.lanternLit ? '#f0cf7d' : '#8b7958', '#a96b45', 2);
+      ctx.fillStyle = '#b16b43'; ctx.fillRect(x - 1, y - 20, 2, 27);
+      ctx.fillStyle = '#d6a458'; ctx.fillRect(x - 7, y + 9, 14, 4); ctx.fillRect(x - 2, y + 13, 4, 10);
+    }
+    if (game.disturbers) { label(ctx, '灯火受扰！', x, y - 44, '#f1a18a', 12); }
+    else if (!game.pickedUp && game.state === 'playing') label(ctx, game.canPickupLantern ? game.lanternLit ? '碰撞拾取' : '未点亮 · 碰撞拾取' : '集齐火烛后拾取', x, y - 44, '#e8c879', 12);
+  }
+  function drawAnimal(a) {
+    const x = Math.round(a.x), y = Math.round(a.y), chicken = a.type === 'chicken';
+    const moving = !['idle', 'disturb', 'botherPlayer'].includes(a.state);
+    const bob = moving ? Math.floor(game.elapsed * (a.state === 'flee' ? 16 : 6) + a.phase) % 2 * 2 : 0;
+    const key = chicken ? a.state === 'flee' ? 'chickenFlee' : a.state === 'idle' || a.state === 'disturb' ? 'chickenIdle' : 'chickenWalk' : a.state === 'retreat' || a.state === 'avoid' ? 'dogRetreat' : 'dogWander';
+    const flip = (['flee', 'retreat', 'avoid'].includes(a.state) ? a.escape.x : a.velocity.x) < 0;
+    if (!sprite(key, x, y + 12 - bob, chicken ? 30 : 44, chicken ? 34 : 38, flip)) {
+      ctx.save(); ctx.translate(x, y); if (flip) ctx.scale(-1, 1);
+      const color = a.flash > 0 ? '#fff2cf' : chicken ? a.state === 'flee' ? '#f1bc7f' : '#dfce9f' : '#484f9b';
+      if (chicken) {
+        const peck = a.state === 'disturb' ? Math.floor(game.elapsed * 8) % 2 * 5 : 0;
+        block(ctx, -13, -10 - bob, 24, 20, color); block(ctx, 3, -21 + peck - bob, 14, 17, color);
+        block(ctx, 5, -25 + peck - bob, 8, 7, '#b75842', '#141d1c', 2);
+        ctx.fillStyle = '#dd9956'; ctx.fillRect(17, -13 + peck - bob, 5, 4);
+        ctx.fillStyle = '#10191b'; ctx.fillRect(11, -15 + peck - bob, 3, 3);
+        ctx.fillStyle = '#a58555'; ctx.fillRect(-7, 9, 3, 6 + bob); ctx.fillRect(4, 9, 3, 8 - bob);
+      } else {
+        block(ctx, -18, -10 - bob, 31, 22, color); block(ctx, 8, -19 - bob, 18, 20, color);
+        block(ctx, 7, -22 - bob, 9, 11, '#27366d', '#111a1c', 2);
+        block(ctx, 22, -9 - bob, 8, 8, '#e0e1dc', '#111a1c', 2);
+        ctx.fillStyle = '#121b1c'; ctx.fillRect(20, -14 - bob, 3, 3);
+        block(ctx, -16, 8, 8, 9 + bob, '#e0e1dc', '#111a1c', 2); block(ctx, 7, 8, 8, 11 - bob, '#e0e1dc', '#111a1c', 2);
+        block(ctx, -25, -16 - bob, 10, 8, color, '#111a1c', 2);
+      }
+      ctx.restore();
+    }
+    if (a.state === 'disturb' || a.state === 'botherPlayer') label(ctx, '!', x, y - 34, '#ed9b7c', 18);
+    else if (['flee', 'retreat', 'avoid'].includes(a.state)) {
+      ctx.fillStyle = '#b5b9a0'; ctx.fillRect(x - 23, y + 8, 5, 3); ctx.fillRect(x - 30, y + 13, 4, 3);
+    }
+  }
+  function draw() {
+    ctx.globalAlpha = 1; ctx.fillStyle = game.level.sky; ctx.fillRect(0, 0, 960, 540);
+    const background = images[game.level.background];
+    if (background) {
+      // Purely visual mapping: keep the painted doorway aligned with the unchanged gate.
+      const img = background, seam = Math.round(img.naturalHeight * 0.385);
+      ctx.drawImage(img, 0, 0, img.naturalWidth, seam, 0, 0, 960, 185);
+      ctx.drawImage(img, 0, seam, img.naturalWidth, img.naturalHeight - seam, 0, 185, 960, 355);
+    } else ctx.drawImage(bg, 0, 0, 960, 540);
+    if (game.level.phase === 'midnight' && background) {
+      ctx.globalAlpha = 0.12; ctx.fillStyle = '#071428'; ctx.fillRect(0, 0, 960, 540); ctx.globalAlpha = 1;
+    }
+    for (const log of game.logs) {
+      block(ctx, log.x, log.y, log.width, log.height, '#92613e', '#111821', 3);
+      block(ctx, log.x + 3, log.y + 3, 17, log.height - 6, '#be985e', '#4c382c', 2);
+      ctx.fillStyle = '#6b4932'; ctx.fillRect(log.x + 9, log.y + 8, 5, 8);
+      for (let offset = 25; offset < log.width - 7; offset += 17) {
+        ctx.fillStyle = '#bf8a52'; ctx.fillRect(log.x + offset, log.y + 6, 12, 3);
+        ctx.fillStyle = '#65472e'; ctx.fillRect(log.x + offset + 3, log.y + 15, 12, 3);
+      }
+    }
+    for (const c of game.candles) if (!c.collected) {
+      block(ctx, c.x - 8, c.y - 10, 16, 22, '#dfc996', '#111820', 3);
+      ctx.fillStyle = '#b89665'; ctx.fillRect(c.x + 2, c.y - 5, 3, 12);
+      ctx.fillStyle = '#111820'; ctx.fillRect(c.x - 1, c.y - 16, 3, 7);
+      ctx.fillStyle = '#db8b42'; ctx.fillRect(c.x - 5, c.y - 24, 10, 11);
+      ctx.fillStyle = '#f4d77f'; ctx.fillRect(c.x - 2, c.y - 28, 4, 12);
+      label(ctx, '火烛', c.x, c.y + 26, '#e8c879', 10);
+    }
+    if (game.route) {
+      // 与真实横向碰撞边界一致的节庆绳栏，明确安全通道边缘。
+      for (const x of [game.route.left, game.route.right]) {
+        ctx.fillStyle = '#111923'; ctx.fillRect(x - 3, 190, 6, 334);
+        ctx.fillStyle = '#c49a5c'; ctx.fillRect(x - 1, 190, 2, 334);
+        for (let y = 194; y < 526; y += 38) block(ctx, x - 5, y, 10, 15, '#9c6845', '#10171d', 2);
+      }
+    }
+    for (const bomb of game.bombs) {
+      const x = Math.round(bomb.x), y = Math.round(bomb.y);
+      const warning = Math.floor(game.elapsed * 3) % 2 ? '#e7b65b' : '#d76a45';
+      ctx.fillStyle = warning;
+      for (let py = -8; py <= 8; py++) for (let px = -8; px <= 8; px++) {
+        const radius = Math.hypot(px * 4, py * 4);
+        if (radius >= bomb.radius + 12 && radius <= bomb.radius + 16) ctx.fillRect(x + px * 4 - 2, y + py * 4 - 2, 4, 4);
+      }
+      const size = bomb.radius;
+      if (!sprite('bomb', x, y + size, size * 2, Math.round(size * 2.6))) {
+        block(ctx, x - size, y - size + 4, size * 2, size * 2 - 3, '#cb393e', '#0c111b', 3);
+        block(ctx, x - size, y - size, size * 2, 8, '#30303e', '#0c111b', 2);
+        block(ctx, x - size + 4, y - size + 2, size * 2 - 8, 3, '#b6aaa1', '#30303e', 1);
+        block(ctx, x - size, y + size - 4, size * 2, 5, '#30303e', '#0c111b', 2);
+        ctx.fillStyle = '#e8ba6d'; ctx.fillRect(x - size + 4, y, 2, 2); ctx.fillRect(x + size - 6, y, 2, 2);
+      }
+    }
+    const gate = game.gate;
+    ctx.fillStyle = '#d6b56c'; ctx.fillRect(gate.x, gate.y + gate.height - 3, gate.width, 3);
+    ctx.fillRect(gate.x, gate.y + 13, 3, 19); ctx.fillRect(gate.x + gate.width - 3, gate.y + 13, 3, 19);
+    label(ctx, game.levelIndex === 0 ? '请灯送达' : game.levelIndex === 1 ? '围拳铺 · 送灯至此' : '祖堂献灯', 480, 198, '#e6c985', 12);
+    // 光晕也使用硬边色块，保留像素原型风格。
+    if (game.lanternLit) {
+      ctx.globalAlpha = 0.10 + game.stability / 1400;
+      ctx.fillStyle = '#f1c569'; const lx = Math.round(game.lantern.x), ly = Math.round(game.lantern.y);
+      ctx.fillRect(lx - 47, ly - 31, 94, 66); ctx.fillRect(lx - 33, ly - 45, 66, 94); ctx.globalAlpha = 1;
+    }
+    const entities = [...game.animals.map(a => ({ y: a.y, draw: () => drawAnimal(a), entity: a })),
+      { y: game.lantern.y, draw: drawLantern, entity: game.lantern }, { y: game.player.y, draw: drawPlayer, entity: game.player }];
+    entities.sort((a, b) => a.y - b.y);
+    for (const e of entities) { ctx.fillStyle = '#13242080'; ctx.fillRect(Math.round(e.entity.x - 15), Math.round(e.y + 8), 30, 8); e.draw(); }
+    if (game.explosion) {
+      const { x, y } = game.explosion;
+      ctx.fillStyle = '#682f33'; ctx.fillRect(x - 29, y - 12, 58, 24); ctx.fillRect(x - 12, y - 29, 24, 58);
+      ctx.fillStyle = '#e2793d'; ctx.fillRect(x - 22, y - 9, 44, 18); ctx.fillRect(x - 9, y - 22, 18, 44);
+      ctx.fillStyle = '#f7cc75'; ctx.fillRect(x - 10, y - 10, 20, 20);
+    }
+    for (const p of game.particles) { ctx.globalAlpha = p.life / p.max; label(ctx, p.label, p.x, p.y, '#ffe4a3', 14); } ctx.globalAlpha = 1;
+    // 像素角标：护送进度，始终由花灯位置决定。
+    const progress = clamp((496 - game.lantern.y) / (496 - (game.gate.y + game.gate.height)), 0, 1);
+    block(ctx, 18, 18, 142, 37, '#182b2d', '#0d1c20', 2);
+    const phaseName = ['傍晚', '夜晚', '深夜'][game.levelIndex];
+    label(ctx, game.levelIndex === 1 && !game.pickedUp ? `火烛 ${game.candlesCollected}/${game.level.candles} · ${game.canPickupLantern ? '可拾灯' : '先收集'}` : `${game.levelIndex + 1}/${LEVELS.length} ${phaseName} · ${Math.round(progress * 100)}%`, 89, 34, '#c3c9b0', 10);
+    ctx.fillStyle = '#3d5146'; ctx.fillRect(29, 42, 119, 4); ctx.fillStyle = '#bdb778'; ctx.fillRect(29, 42, Math.round(119 * progress), 4);
+  }
+  function syncUI() {
+    window.lanternMusic?.setActive(opening.phase === 'playing' && game.state === 'playing' && !document.hidden);
+    if (previousState !== game.state) {
+      if (['cleared', 'won'].includes(game.state)) run.completeLevel(game.levelIndex);
+      if (game.state === 'lost') run.fail();
+    }
+    document.getElementById('total-time').textContent = clockText(run.seconds);
+    returnSelection.hidden = !['won', 'lost'].includes(game.state);
+    unlockMessage.hidden = game.state !== 'won';
+    document.querySelector('.dialog').classList.toggle('campaign-result', game.state === 'won');
+    ui.restart.disabled = opening.phase !== 'playing';
+    resultCharacter.hidden = !['cleared', 'won', 'lost'].includes(game.state);
+    const value = Math.ceil(game.stability), secs = Math.ceil(game.remaining);
+    ui.stability.textContent = `${value} / 100`;
+    ui['stability-fill'].style.width = `${game.stability}%`;
+    ui['stability-fill'].style.background = value <= 25 ? '#db8065' : '#e8b65c';
+    ui['stability-bar'].setAttribute('aria-valuenow', value);
+    ui.timer.textContent = `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`;
+    ui.timer.style.color = secs <= 20 ? '#e89b7c' : '';
+    ui.pause.disabled = !['playing', 'paused'].includes(game.state);
+    ui.pause.textContent = game.state === 'paused' ? '继续 P' : '暂停 P';
+    ui['return-first'].hidden = game.state !== 'lost';
+    ui['level-badge'].textContent = `${String(game.levelIndex + 1).padStart(2, '0')} / ${LEVELS.length} · ${game.level.name}`;
+    const hint = game.state === 'ready' ? '准备请灯 · 绕过木头，碰撞拾取未点亮的花灯' : game.state === 'paused' ? '已暂停 · 按 P 继续护灯' : game.state === 'won' ? '三关花灯全部平安入祠' : game.state === 'cleared' ? '本关完成 · 点击下一关继续护灯' : game.state === 'lost' ? '请选择返回最初关卡，或继续这一关重新挑战' : !game.canPickupLantern ? `收集火烛 ${game.candlesCollected}/${game.level.candles} · 集齐才能拾灯并刷新土狗` : game.disturbers ? '鸡犬正在扰灯！靠近它们，面朝它们挥杆' : game.playerInterference ? '鸡犬贴身干扰，移动减速 · 挥杆驱赶' : !game.pickedUp ? game.levelIndex === 1 ? '火烛已集齐，土狗已出现 · 碰撞花灯拾取' : '花灯尚未拾取 · 用方向键走过去碰撞花灯' : game.bombs.length ? '花灯已拾取 · 通路已放宽，绕开警示圈即可安全通过' : game.levelIndex === 0 ? '花灯未点亮 · 绕过木头，留意土鸡干扰' : '花灯已点亮 · 围拳铺，留意鸡犬干扰';
+    if (ui.hint.textContent !== `●${hint}`) { ui.hint.replaceChildren(); const dot = document.createElement('span'); dot.className = 'status-dot'; dot.textContent = '●'; ui.hint.append(dot, document.createTextNode(hint)); }
+    if (previousState === game.state) return;
+    previousState = game.state;
+    ui.overlay.hidden = game.state === 'playing';
+    if (game.state === 'paused') {
+      ui['dialog-mark'].textContent = '歇一歇'; ui['dialog-title'].textContent = '灯火暂歇，人未散';
+      ui['dialog-description'].textContent = '时间与鸡犬都已暂停，准备好后继续护灯。'; ui.start.textContent = '继续护灯 →';
+    } else if (game.state === 'cleared') {
+      const next = LEVELS[game.levelIndex + 1];
+      ui['dialog-mark'].textContent = `第 ${game.levelIndex + 1} 关 · 花灯入祠`; ui['dialog-title'].textContent = '花灯入祠，本关完成';
+      ui['dialog-description'].textContent = next.route ? '下一关：深夜祖堂献灯。通路已放宽，红色大鼓更小；碰到仍失败，挥杆不能清除。' : '下一关：夜晚围拳铺。先收齐 3 支火烛，才可拾灯；集齐瞬间土狗出现。'; ui.start.textContent = '下一关 →';
+    } else if (game.state === 'won') {
+      ui['dialog-mark'].textContent = '三关花灯入祠'; ui['dialog-title'].textContent = '三关护送，全部通关';
+      const total = Math.floor(run.seconds);
+      ui['dialog-description'].textContent = `本次通关用时：${Math.floor(total / 60)}分${String(total % 60).padStart(2, '0')}秒 · 剩余稳定度 ${value}`;
+      if (run.canUnlock) {
+        const saved = unlocks.unlock();
+        unlockMessage.textContent = '恭喜！解锁花灯使者皮肤，可在角色选择界面选用' + (saved ? '' : '（当前浏览器无法保存，本次打开期间可用）');
+      } else unlockMessage.textContent = '未达到解锁条件，继续挑战缩短通关时间' + (!run.full ? '；请从第1关完整通关三关' : '') + (unlocks.unlocked ? '。已解锁的皮肤仍保留' : '');
+      ui.start.textContent = '从第一关再玩 →';
+    } else if (game.state === 'lost') {
+      ui['dialog-mark'].textContent = '再接再厉'; ui['dialog-title'].textContent = '这一路，还需守护';
+      ui['dialog-description'].textContent = game.reason; ui.start.textContent = '继续这一关';
+    }
+    if (game.state !== 'playing' && game.state !== 'ready') ui.start.focus({ preventScroll: true });
+  }
+  function start() { if (opening.phase !== 'playing') return; keys.clear(); run.reset(game.levelIndex); game.start(); accumulator = 0; last = performance.now(); canvas.focus({ preventScroll: true }); syncUI(); }
+  ui.start.addEventListener('click', () => {
+    if (opening.phase !== 'playing') return;
+    keys.clear();
+    if (game.state === 'paused') game.togglePause();
+    else if (game.state === 'cleared') game.nextLevel();
+    else if (game.state === 'lost') { run.reset(game.levelIndex); game.retryLevel(); }
+    else { const level = game.state === 'won' ? 0 : game.levelIndex; run.reset(level); game.start(level); }
+    accumulator = 0; last = performance.now(); canvas.focus({ preventScroll: true }); syncUI();
+  });
+  ui['return-first'].addEventListener('click', () => {
+    if (game.state !== 'lost') return;
+    keys.clear(); run.reset(0); game.restartCampaign(); accumulator = 0; last = performance.now(); canvas.focus({ preventScroll: true }); syncUI();
+  });
+  ui.restart.addEventListener('click', start);
+  ui.pause.addEventListener('click', () => { keys.clear(); game.togglePause(); syncUI(); if (game.state === 'playing') canvas.focus({ preventScroll: true }); });
+  const controlCodes = new Set(['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight', 'Space', 'KeyP', 'KeyR']);
+  window.addEventListener('keydown', e => {
+    if (opening.phase !== 'playing') return;
+    if (e.target?.tagName === 'INPUT') return;
+    if (!controlCodes.has(e.code) || e.ctrlKey || e.metaKey || e.altKey) return;
+    // 空格保留原生按钮激活行为，防止键盘用户无法开始。
+    if (e.code === 'Space' && document.activeElement?.tagName === 'BUTTON') return;
+    e.preventDefault();
+    if (e.code === 'KeyP' && !e.repeat) { keys.clear(); game.togglePause(); syncUI(); }
+    else if (e.code === 'KeyR' && !e.repeat) start();
+    else keys.add(e.code);
+  });
+  window.addEventListener('keyup', e => keys.delete(e.code));
+  function loseFocus() { keys.clear(); if (game.state === 'playing') { game.togglePause(); syncUI(); } }
+  window.addEventListener('blur', loseFocus);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) loseFocus(); });
+  for (const button of document.querySelectorAll('[data-key]')) {
+    button.addEventListener('pointerdown', e => { e.preventDefault(); button.setPointerCapture(e.pointerId); keys.add(button.dataset.key); });
+    for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) button.addEventListener(event, () => keys.delete(button.dataset.key));
+  }
+  canvas.addEventListener('pointerdown', () => canvas.focus({ preventScroll: true }));
+  function frame(now) {
+    run.tick((now - last) / 1000, game.state);
+    const elapsed = Math.min((now - last) / 1000, 0.1); last = now;
+    if (game.state === 'playing') {
+      accumulator += elapsed;
+      while (accumulator >= 1 / 60) { game.update(1 / 60, keys); accumulator -= 1 / 60; }
+    } else accumulator = 0;
+    draw(); syncUI(); requestAnimationFrame(frame);
+  }
+  syncUI(); requestAnimationFrame(frame);
+}
+if (typeof module !== 'undefined' && module.exports) module.exports = { Game, CONFIG, PNG_ASSETS, LEVELS, OpeningFlow, preloadAssets, CampaignRun, SkinUnlocks, UNLOCK_SECONDS, UNLOCK_STORAGE_KEY, StoryPlayback, STORY_LINES };
+if (typeof document !== 'undefined') boot();
+
+</script>
+</body>
+</html>
